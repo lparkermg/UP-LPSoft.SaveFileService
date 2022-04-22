@@ -86,7 +86,7 @@ namespace LPSoft.SaveFileService
                 {
                     var wrapper = new DataWrapper<TData>() {
                         Data = _maxSlots;
-                    }
+                    };
                     var data = JsonUtility.ToJson(wrapper);
                     writer.Write(Encoding.UTF8.GetBytes(data));
 

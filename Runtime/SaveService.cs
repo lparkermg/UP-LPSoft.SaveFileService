@@ -12,12 +12,12 @@ namespace LPSoft.SaveFileService
     using UnityEngine;
 
     /// <inheritdoc />
-    public sealed class SaveService<TData> : ISaveFileService<TData>
+    public sealed class SaveService : ISaveFileService
     {
-        private TData[] _maxSlots;
+        private string[] _maxSlots;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SaveService{TData}"/> class.
+        /// Initializes a new instance of the <see cref="SaveService{string}"/> class.
         /// </summary>
         /// <param name="maxSlots">The maximum amount of slots for the service starting from 1.</param>
         public SaveService(int maxSlots)
@@ -27,7 +27,7 @@ namespace LPSoft.SaveFileService
                 throw new ArgumentException("Slots cannot be zero or negative.");
             }
 
-            _maxSlots = new TData[maxSlots];
+            _maxSlots = new string[maxSlots];
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace LPSoft.SaveFileService
         public int TotalSlots => _maxSlots.Length;
 
         /// <inheritdoc />
-        public async Task<TData> Get(int index)
+        public async Task<string> Get(int index)
         {
             if (index > _maxSlots.Length)
             {
@@ -64,7 +64,7 @@ namespace LPSoft.SaveFileService
                 using (var reader = new BinaryReader(fs))
                 {
                     var data = Encoding.UTF8.GetString(reader.ReadBytes((int)fs.Length));
-                    var loadedData = JsonUtility.FromJson<DataWrapper<TData>>(data);
+                    var loadedData = JsonUtility.FromJson<DataWrapper<string>>(data);
                     _maxSlots = loadedData.Data;
 
                     return Task.CompletedTask;
@@ -84,7 +84,7 @@ namespace LPSoft.SaveFileService
             {
                 using (var writer = new BinaryWriter(fs))
                 {
-                    var wrapper = new DataWrapper<TData>() {
+                    var wrapper = new DataWrapper<string>() {
                         Data = _maxSlots,
                     };
                     var data = JsonUtility.ToJson(wrapper);
@@ -96,7 +96,7 @@ namespace LPSoft.SaveFileService
         }
 
         /// <inheritdoc />
-        public Task Set(int index, TData newData)
+        public Task Set(int index, string newData)
         {
             if (index > _maxSlots.Length)
             {

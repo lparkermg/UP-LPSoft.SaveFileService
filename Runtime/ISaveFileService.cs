@@ -9,8 +9,7 @@ namespace LPSoft.SaveFileService
     /// <summary>
     /// Interface for the Save File Service.
     /// </summary>
-    /// <typeparam name="TData">The data type of the saves.</typeparam>
-    public interface ISaveFileService<TData>
+    public interface ISaveFileService
     {
         /// <summary>
         /// Sets a specified slot with the new save data, overwriting what was in the internal state.
@@ -18,14 +17,14 @@ namespace LPSoft.SaveFileService
         /// <param name="index">Index of the data to update.</param>
         /// <param name="newData">The new save data.</param>
         /// <returns>A task representing the async method.</returns>
-        Task Set(int index, TData newData);
+        Task Set(int index, string newData);
 
         /// <summary>
         /// Gets a slot of save data from the internal state.
         /// </summary>
         /// <param name="index">The index of the slot.</param>
         /// <returns>The save data in the slot of the provided index.</returns>
-        Task<TData> Get(int index);
+        Task<string> Get(int index);
 
         /// <summary>
         /// Saves all the current slots to file.

@@ -1,0 +1,13 @@
+{
+    "name":"com.lpsoft.save-file-service",
+    "version": "1.0.0",
+    "description": "A basic save service which uses a slot based system.",
+    "displayName": "Save File Service",
+    "unity": "2021.2",
+    "author": {
+        "name": "Luke Parker",
+        "url": "https://mrlparker.com"
+    },
+    "keywords": ["Save", "File", "Service"]
+
+}

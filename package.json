@@ -1,6 +1,6 @@
 {
     "name":"com.lpsoft.save-file-service",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A basic save service which uses a slot based system.",
     "displayName": "Save File Service",
     "unity": "2021.2",

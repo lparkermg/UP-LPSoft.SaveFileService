@@ -7,9 +7,9 @@ namespace LPSoft.SaveFileService
     using System;
     using System.IO;
     using System.Text;
-    using System.Text.Json;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
+    using UnityEngine;
 
     /// <inheritdoc />
     public sealed class SaveService<TData> : ISaveFileService<TData>
@@ -64,7 +64,8 @@ namespace LPSoft.SaveFileService
                 using (var reader = new BinaryReader(fs))
                 {
                     var data = Encoding.UTF8.GetString(reader.ReadBytes((int)fs.Length));
-                    _maxSlots = JsonSerializer.Deserialize<TData[]>(data);
+                    var loadedData = JsonUtility.FromJson<DataWrapper<TData>>(data);
+                    _maxSlots = loadedData.Data;
 
                     return Task.CompletedTask;
                 }
@@ -83,7 +84,10 @@ namespace LPSoft.SaveFileService
             {
                 using (var writer = new BinaryWriter(fs))
                 {
-                    var data = JsonSerializer.Serialize(_maxSlots);
+                    var wrapper = new DataWrapper<TData>() {
+                        Data = _maxSlots;
+                    }
+                    var data = JsonUtility.ToJson(wrapper);
                     writer.Write(Encoding.UTF8.GetBytes(data));
 
                     return Task.CompletedTask;
@@ -106,6 +110,10 @@ namespace LPSoft.SaveFileService
 
             _maxSlots[index] = newData;
             return Task.CompletedTask;
+        }
+
+        private class DataWrapper<T> {
+            public T[] Data;
         }
     }
 }

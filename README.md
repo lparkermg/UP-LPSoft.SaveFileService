@@ -5,10 +5,10 @@ Generic service for saving and loading saves.
 
 ###  Service Setup
 
-Initialising the included `SaveService` with a maximum slot value will set an array of the provided data type to the amount of slots provided in the constructor. For example the following will setup a new service with 5 slots of the `string` data type:
+Initialising the included `SaveService` with a maximum slot value will set an array of the provided data type to the amount of slots provided in the constructor. For example the following will setup a new service with 5 slots:
 
 ```
-var service = new SaveService<string>(5);
+var service = new SaveService(5);
 ```
 
 ### Saving Data

@@ -9,12 +9,11 @@ namespace LPSoft.SaveFileService
     using System.Text;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
-    using UnityEngine;
 
     /// <inheritdoc />
-    public sealed class SaveService : ISaveFileService
+    public sealed class SaveService<T> : ISaveFileService<T>
     {
-        private string[] _maxSlots;
+        private T[] _maxSlots;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SaveService{string}"/> class.
@@ -27,7 +26,7 @@ namespace LPSoft.SaveFileService
                 throw new ArgumentException("Slots cannot be zero or negative.");
             }
 
-            _maxSlots = new string[maxSlots];
+            _maxSlots = new T[maxSlots];
         }
 
         /// <summary>
@@ -36,7 +35,7 @@ namespace LPSoft.SaveFileService
         public int TotalSlots => _maxSlots.Length;
 
         /// <inheritdoc />
-        public async Task<string> Get(int index)
+        public async Task<T> Get(int index)
         {
             if (index > _maxSlots.Length)
             {
@@ -63,9 +62,8 @@ namespace LPSoft.SaveFileService
             {
                 using (var reader = new BinaryReader(fs))
                 {
-                    var data = Encoding.UTF8.GetString(reader.ReadBytes((int)fs.Length));
-                    var loadedData = JsonUtility.FromJson<DataWrapper<string>>(data);
-                    _maxSlots = loadedData.Data;
+                    var serialiser = new XmlSerializer(typeof(T[]));
+                    _maxSlots = (T[])serialiser.Deserialize(reader.BaseStream);
 
                     return Task.CompletedTask;
                 }
@@ -84,11 +82,10 @@ namespace LPSoft.SaveFileService
             {
                 using (var writer = new BinaryWriter(fs))
                 {
-                    var wrapper = new DataWrapper<string>() {
-                        Data = _maxSlots,
-                    };
-                    var data = JsonUtility.ToJson(wrapper);
-                    writer.Write(Encoding.UTF8.GetBytes(data));
+                    var memStream = new MemoryStream();
+                    var serialiser = new XmlSerializer(typeof(T[]));
+                    serialiser.Serialize(memStream, _maxSlots);
+                    writer.Write(memStream.ToArray());
 
                     return Task.CompletedTask;
                 }
@@ -96,7 +93,7 @@ namespace LPSoft.SaveFileService
         }
 
         /// <inheritdoc />
-        public Task Set(int index, string newData)
+        public Task Set(int index, T newData)
         {
             if (index > _maxSlots.Length)
             {
@@ -110,10 +107,6 @@ namespace LPSoft.SaveFileService
 
             _maxSlots[index] = newData;
             return Task.CompletedTask;
-        }
-
-        private class DataWrapper<T> {
-            public T[] Data;
         }
     }
 }
